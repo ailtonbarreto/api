@@ -3,7 +3,7 @@ import pandas as pd
 
 
 
-url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR1r12cssSXouQMRpdh3SDWVnffV5NvapPJ0ln6gjv-8s9eiXQ04d6kmV4TjUpxqdVGbvGHua9EsVDx/pub?gid=1081596630&single=true&output=csv"
+url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQAEct5jF2nnOSaqoR7i6Fcz2pOLXN4oifn5G2CeO3k7N3uU0C3-B-exrtzS5Ufjul32tAZ1R8KcS8N/pub?gid=0&single=true&output=csv"
 
     
 
