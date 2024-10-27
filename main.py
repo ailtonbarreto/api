@@ -49,31 +49,31 @@ def load_database():
 # ------------------------------------------------------------------------------------------
 # TABELA VENDAS
 
-@app.get("/vendas")
-def load_tbvendas():
-    host = 'gluttonously-bountiful-sloth.data-1.use1.tembo.io'
-    database = 'postgres'
-    user = 'postgres'
-    password = 'MeSaIkkB57YSOgLO'
-    port = '5432'
+# @app.get("/vendas")
+# def load_tbvendas():
+#     host = 'gluttonously-bountiful-sloth.data-1.use1.tembo.io'
+#     database = 'postgres'
+#     user = 'postgres'
+#     password = 'MeSaIkkB57YSOgLO'
+#     port = '5432'
 
-    try:
-        conn = psycopg2.connect(
-            host=host,
-            database=database,
-            user=user,
-            password=password,
-            port=port
-        )        
-        query = "SELECT * FROM tembo.tb_vendas;"
-        df = pd.read_sql_query(query, conn)
-    except Exception as e:
+#     try:
+#         conn = psycopg2.connect(
+#             host=host,
+#             database=database,
+#             user=user,
+#             password=password,
+#             port=port
+#         )        
+#         query = "SELECT * FROM tembo.tb_vendas;"
+#         df = pd.read_sql_query(query, conn)
+#     except Exception as e:
   
     
 
-     if conn:
-        conn.close()
-    return df.to_dict(orient="records")
+#      if conn:
+#         conn.close()
+#     return df.to_dict(orient="records")
 
 # ------------------------------------------------------------------------------------------
 
