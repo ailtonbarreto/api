@@ -54,7 +54,7 @@ def load_database():
 # ------------------------------------------------------------------------------------------
 # TABELA VENDAS
 
-@app.get("/vendas")
+@app.get("/venda")
 def load_tbvendas():
     host = 'gluttonously-bountiful-sloth.data-1.use1.tembo.io'
     database = 'postgres'
@@ -70,7 +70,7 @@ def load_tbvendas():
             password=password,
             port=port
         )        
-        query = "SELECT * FROM tembo.tb_venda;"
+        query = f"select * from tembo.tb_venda where \"EMISSAO\" >= '2024-06-30'"
         df = pd.read_sql_query(query, conn)
     except Exception as e:
   
