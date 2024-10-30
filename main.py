@@ -71,15 +71,14 @@ class Item(BaseModel):
     qtd: int
     vr_unit: float
 
-# Endpoint POST para criar um pedido
 @app.post("/pedido/")
 async def create_item(item: Item):
+    # Validação personalizada para quantidade e valor unitário
     if item.vr_unit <= 0:
         raise HTTPException(status_code=400, detail="O valor unitário deve ser positivo.")
     if item.qtd <= 0:
         raise HTTPException(status_code=400, detail="A quantidade deve ser maior que zero.")
-    
-    # Inserir o item no banco de dados
+
     try:
         conn = psycopg2.connect(**db_config)
         cursor = conn.cursor()
@@ -92,6 +91,7 @@ async def create_item(item: Item):
             item.sku, item.parent, item.qtd, item.vr_unit
         ))
         conn.commit()
+        print("Pedido inserido no banco com sucesso")  # Log de confirmação
     except Exception as e:
         print("Erro ao inserir o pedido no banco:", e)
         raise HTTPException(status_code=500, detail="Erro ao salvar no banco de dados.")
