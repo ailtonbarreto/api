@@ -1,6 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import Optional
+from datetime import datetime
 import psycopg2
 
 
@@ -46,6 +49,8 @@ def load_database():
     return df.to_dict(orient="records")
 
 
+
+
 # ------------------------------------------------------------------------------------------
 # TABELA VENDAS
 
@@ -65,7 +70,7 @@ def load_tbvendas():
             password=password,
             port=port
         )        
-        query = "SELECT * FROM tembo.tb_vendas;"
+        query = "SELECT * FROM tembo.tb_venda;"
         df = pd.read_sql_query(query, conn)
     except Exception as e:
   
@@ -74,6 +79,32 @@ def load_tbvendas():
      if conn:
         conn.close()
     return df.to_dict(orient="records")
+
+# ------------------------------------------------------------------------------------------
+
+
+class Item(BaseModel):
+    pedido: str
+    emissao: Optional[datetime] = None
+    entrega: Optional[datetime] = None
+    sku_cliente: int
+    sku: str
+    parent: int
+    qtd: int
+    vr_unit: float
+
+# Endpoint POST para criar um pedido
+@app.post("/pedido/")
+async def create_item(item: Item):
+    # Validação personalizada para quantidade e valor unitário
+    if item.vr_unit <= 0:
+        raise HTTPException(status_code=400, detail="O valor unitário deve ser positivo.")
+    if item.qtd <= 0:
+        raise HTTPException(status_code=400, detail="A quantidade deve ser maior que zero.")
+    
+    # Retorna a confirmação com os dados recebidos
+    return {"message": "Item criado com sucesso!", "item": item}
+
 
 # ------------------------------------------------------------------------------------------
 
