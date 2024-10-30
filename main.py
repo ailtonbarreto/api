@@ -84,7 +84,7 @@ async def create_item(item: Item):
         conn = psycopg2.connect(**db_config)
         cursor = conn.cursor()
         insert_query = """
-            INSERT INTO sua_tabela_pedidos (pedido, emissao, entrega, sku_cliente, sku, parent, qtd, vr_unit)
+            INSERT INTO tembo.tb_venda (pedido, emissao, entrega, sku_cliente, sku, parent, qtd, vr_unit)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
         cursor.execute(insert_query, (
