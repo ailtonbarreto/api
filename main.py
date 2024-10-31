@@ -48,7 +48,7 @@ def load_database():
 def load_tbvendas():
     try:
         conn = psycopg2.connect(**db_config)
-        query = f"SELECT * FROM tembo.tb_venda WHERE \"EMISSAO\" >= '2024-06-30'"
+        query = f"SELECT * FROM tembo.tb_venda WHERE \"EMISSAO\" >= '2024-05-31' LIMIT 10"
         df = pd.read_sql_query(query, conn)
     except Exception as e:
         print("Erro ao carregar as vendas:", e)
@@ -61,46 +61,43 @@ def load_tbvendas():
 
 # ------------------------------------------------------------------------------------------
 # MODELO PARA CRIAÇÃO DE PEDIDO
+
 class Item(BaseModel):
     pedido: str
-    emissao: Optional[datetime] = None
-    entrega: Optional[datetime] = None
+    emissao: str
+    entrega: str
     sku_cliente: int
     sku: str
     parent: int
     qtd: int
     vr_unit: float
 
+# Endpoint POST para criar um pedido
 @app.post("/pedido/")
 async def create_item(item: Item):
-    # Validação personalizada para quantidade e valor unitário
     if item.vr_unit <= 0:
         raise HTTPException(status_code=400, detail="O valor unitário deve ser positivo.")
     if item.qtd <= 0:
-        raise HTTPException(status_code=400, detail="A quantidade deve ser maior que zero.")
+        raise HTTPException(status_code=400, detail="A quantidade deve ser positiva.")
+    
+    return {"message": "Pedido criado com sucesso!", "item": item}
 
-    try:
-        conn = psycopg2.connect(**db_config)
-        cursor = conn.cursor()
-        insert_query = """
-            INSERT INTO tembo.tb_venda (pedido, emissao, entrega, sku_cliente, sku, parent, qtd, vr_unit)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        """
-        cursor.execute(insert_query, (
-            item.pedido, item.emissao, item.entrega, item.sku_cliente,
-            item.sku, item.parent, item.qtd, item.vr_unit
-        ))
-        conn.commit()
-        print("Pedido inserido no banco com sucesso")  # Log de confirmação
-    except Exception as e:
-        print("Erro ao inserir o pedido no banco:", e)
-        raise HTTPException(status_code=500, detail="Erro ao salvar no banco de dados.")
-    finally:
-        if conn:
-            cursor.close()
-            conn.close()
+# Endpoint para testar com valores fixos
+@app.post("/pedido/teste/")
+async def create_test_item():
+    # Valores preenchidos para o teste
+    item = Item(
+        pedido="PEDTESTE",
+        emissao="2024-10-31",
+        entrega="2024-10-31",
+        sku_cliente=9999999,
+        sku="49-44",
+        parent=49,
+        qtd=12,
+        vr_unit=233.99
+    )
 
-    return {"message": "Item criado com sucesso!", "item": item}
+    return {"message": "Pedido de teste criado com sucesso!", "item": item}
 
 
 # uvicorn main:app --reload
